@@ -6,23 +6,40 @@
   <title>PubMed Search Coverage Checker</title>
   <!-- Bootstrap CSS -->
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .container {
+      margin-top: 50px;
+    }
+    .result-container {
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .result-container div {
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
-  <div class="container mt-5">
-    <h1 class="text-center">PubMed Search Coverage Checker</h1>
-    <form id="searchForm" class="mt-4">
+  <div class="container">
+    <h1 class="text-center mb-4">PubMed Search Coverage Checker</h1>
+    <form id="searchForm" class="bg-light p-4 rounded shadow-sm">
       <div class="form-group">
         <label for="query">Search Query:</label>
-        <textarea class="form-control" id="query" name="query" required></textarea>
+        <textarea class="form-control" id="query" name="query" rows="4" required></textarea>
       </div>
       <div class="form-group">
         <label for="ids">PubMed IDs (comma separated):</label>
         <input type="text" class="form-control" id="ids" name="ids" required/>
       </div>
-      <button type="submit" class="btn btn-primary">Check Coverage</button>
+      <button type="submit" class="btn btn-primary btn-block">Check Coverage</button>
     </form>
-    <h2 class="mt-4">Results:</h2>
-    <pre id="results"></pre>
+    <div id="results" class="result-container"></div>
   </div>
 
   <!-- Bootstrap JS and dependencies -->
@@ -41,7 +58,13 @@
       const response = await fetch(`/.netlify/functions/fetchPubMed?${params.toString()}`);
       const data = await response.json();
 
-      document.getElementById('results').textContent = JSON.stringify(data, null, 2);
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.innerHTML = `
+        <h2 class="mt-4">Results:</h2>
+        <div><strong>Captured PubMed IDs:</strong> ${data.capturedIds.join(', ')}</div>
+        <div><strong>Total Hits:</strong> ${data.totalHits}</div>
+        <div><strong>Percentage Captured:</strong> ${data.percentageCaptured}%</div>
+      `;
     });
   </script>
 </body>
