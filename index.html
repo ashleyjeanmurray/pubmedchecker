@@ -33,10 +33,13 @@
   <script>
     document.getElementById('searchForm').addEventListener('submit', async function (event) {
       event.preventDefault();
-      const query = encodeURIComponent(document.getElementById('query').value.trim());
-      const ids = encodeURIComponent(document.getElementById('ids').value.trim().replace(/\s+/g, ''));
+      const query = document.getElementById('query').value.trim();
+      const ids = document.getElementById('ids').value.trim().replace(/\s+/g, '');
 
-      const response = await fetch(`/.netlify/functions/fetchPubMed?query=${query}&ids=${ids}`);
+      const encodedQuery = encodeURIComponent(query);
+      const encodedIds = encodeURIComponent(ids);
+
+      const response = await fetch(`/.netlify/functions/fetchPubMed?query=${encodedQuery}&ids=${encodedIds}`);
       const data = await response.json();
 
       document.getElementById('results').textContent = JSON.stringify(data, null, 2);
