@@ -14,7 +14,14 @@ exports.handler = async (event, context) => {
   const pubmedIdsToCheck = ids.split(',');
 
   try {
-    const searchUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=${query}&retmax=10000&retmode=json`;
+    const encodedQuery = encodeURIComponent(query);
+    const searchUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=${encodedQuery}&retmax=10000&retmode=json`;
+
+    // Debugging: Log the query parameters and constructed URL
+    console.log(`Query: ${query}`);
+    console.log(`Encoded Query: ${encodedQuery}`);
+    console.log(`Search URL: ${searchUrl}`);
+
     const searchResponse = await axios.get(searchUrl);
     const searchResults = searchResponse.data.esearchresult;
     const searchIds = searchResults.idlist;
@@ -32,6 +39,9 @@ exports.handler = async (event, context) => {
       }),
     };
   } catch (error) {
+    // Debugging: Log the error message
+    console.log(`Error: ${error.message}`);
+
     return {
       statusCode: 500,
       body: JSON.stringify({ error: error.message }),
